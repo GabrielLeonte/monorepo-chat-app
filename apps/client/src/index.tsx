@@ -2,18 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import Login from './components/pages/Login';
-import Index from './components/pages/Index';
+import Login from './pages/Login';
+import Index from './pages/Index';
 
-import UnprotectedPage from './components/layout/UnprotectedPage';
-import ProtectedPage from './components/layout/ProtectedPage';
+import UnprotectedPage from './layout/UnprotectedPage';
+import ProtectedPage from './layout/ProtectedPage';
 
 import '@fontsource/rubik';
 import './style.scss';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/channel/:channelId',
     element: <ProtectedPage children={<Index />} />,
   },
   {

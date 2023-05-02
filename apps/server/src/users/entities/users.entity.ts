@@ -3,7 +3,7 @@ import { randomBytes, randomUUID } from 'crypto';
 import { AfterLoad, BeforeInsert, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 import { Channels } from 'src/channels/entities/channels.entity';
-import { encryptSymetrical } from 'src/utils/encryption';
+import { decryptSymetrical, encryptSymetrical } from 'src/utils/encryption';
 
 @Entity()
 export class Users {
@@ -42,6 +42,8 @@ export class Users {
 
   @AfterLoad()
   public afterLoad() {
+    if (this.username) this.username = decryptSymetrical(this.username);
+
     // we better not leak this out
     if (this.salt) delete this.salt;
   }

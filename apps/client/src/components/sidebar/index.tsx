@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { FetchingStatus } from '../../types/fetching';
 
@@ -10,7 +11,9 @@ type ChannelObject = {
   name: string;
 };
 
-const Index = () => {
+const Sidebar = () => {
+  const navigateTo = useNavigate();
+
   const [status, setStatus] = useState<FetchingStatus>('idle');
   const [channels, setChannels] = useState<Array<ChannelObject>>([]);
 
@@ -39,23 +42,20 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="index">
-      <div className="channels">
-        {isFetching ? <p className="item">Loading...</p> : null}
-        {!isFetching && channels.length > 0 ? (
-          channels.map((channel) => (
-            <p key={channel?.id} className="item clickable">
-              {channel?.name}
-            </p>
-          ))
-        ) : (
-          <p className="item">No channels have been created</p>
-        )}
-      </div>
+    <div className="sidebar">
+      {isFetching && channels.length !== 0 ? <p className="item">Loading...</p> : null}
 
-      <div className="channel-content">Hi</div>
+      {!isFetching && channels.length > 0 ? (
+        channels.map((channel) => (
+          <p key={channel?.id} onClick={() => navigateTo(`/channel/${channel.id}`)} className="item clickable">
+            # {channel?.name}
+          </p>
+        ))
+      ) : (
+        <p className="item">No channels have been created</p>
+      )}
     </div>
   );
 };
 
-export default Index;
+export default Sidebar;

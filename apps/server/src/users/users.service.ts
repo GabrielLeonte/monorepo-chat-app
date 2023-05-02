@@ -1,4 +1,4 @@
-import { FindOneOptions, Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsSelect, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -18,6 +18,10 @@ export class UsersService {
   // while mentaining the flexibility
   public findOne(options: FindOneOptions<Users>): Promise<Users> {
     return this.usersRepository.findOne(options);
+  }
+
+  public findAll(select: FindOptionsSelect<Users>): Promise<Array<Users>> {
+    return this.usersRepository.find({ select });
   }
 
   public async getUUIDByUsername(username: string): Promise<string> {

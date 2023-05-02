@@ -6,7 +6,7 @@ const UnprotectedPage: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    if (token) navigateTo('/');
+    if (token) navigateTo('/channel/1');
   }, [navigateTo]);
 
   return <div>{children}</div>;

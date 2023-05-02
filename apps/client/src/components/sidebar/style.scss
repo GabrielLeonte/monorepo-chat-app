@@ -1,0 +1,31 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background-color: #222222;
+
+  height: 100%;
+  width: 300px;
+  padding-top: 15px;
+
+  .item {
+    margin: 0;
+    padding: 5px 0px 5px 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+
+    text-transform: lowercase;
+
+    &:hover {
+      background-color: #434242;
+    }
+  }
+
+  .clickable {
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,45 @@
+.channel-content {
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .content {
+    width: 100%;
+    padding: 20px 20px 20px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .name {
+      font-size: 20px;
+    }
+
+    textarea {
+      resize: none;
+      width: 100%;
+    }
+  }
+
+  .users {
+    padding: 10px;
+    border-left: 1px solid gainsboro;
+
+    .title {
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .loading {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+}

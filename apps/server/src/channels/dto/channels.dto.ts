@@ -7,3 +7,20 @@ export class GetChannelsResponse {
   @ApiProperty()
   name: string;
 }
+
+export class GetChannelsDataResponse {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  messageSentTotal: number;
+
+  @ApiProperty()
+  messageSent5Min: number;
+
+  @ApiProperty()
+  messages: Array<unknown>;
+
+  @ApiProperty()
+  users: Array<unknown>;
+}
