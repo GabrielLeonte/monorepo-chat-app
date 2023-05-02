@@ -1,0 +1,29 @@
+.index {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  .channels {
+    display: flex;
+
+    height: 100%;
+    width: 250px;
+
+    background-color: #3b4151;
+
+    .item {
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 20px 12px 20px;
+    }
+  }
+
+  .channel-content {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+  }
+}
