@@ -36,13 +36,13 @@ export class ChannelsService {
       return this.usersService.findAll({ username: true });
     }
 
-    const channelData = await this.channelsRepository.findOne({
+    const channelData = await this.channelsRepository.find({
       select: { users: { username: true } },
       where: { id: channelId },
       relations: { users: true },
     });
 
-    return channelData.users;
+    return channelData[0].users;
   }
 
   public async getChannelData(channelId: number): Promise<any> {
