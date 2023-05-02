@@ -1,0 +1,12 @@
+{
+  "name": "monorepo-chat-app",
+  "author": "Gabi <gabriel@grasslabs.co>",
+  "license": "MIT",
+  "packageManager": "yarn@3.5.1",
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
+}
