@@ -1,7 +1,10 @@
+import axios from 'axios';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Messages from './messages';
+import Users from './users';
+
 import { FetchingStatus } from '../../types/fetching';
 
 import './style.scss';
@@ -9,14 +12,42 @@ import './style.scss';
 const ChannelContent: FC = () => {
   const { channelId } = useParams();
 
-  const [status, setStatus] = useState<FetchingStatus>('idle');
+  const [channelName, setChannelName] = useState(null);
+  const [messageSent5Min, setMessageSent5Min] = useState(null);
+  const [messageSentTotal, setMessageSentTotal] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [channelData, setChannelData] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  const [status, setStatus] = useState<FetchingStatus>('idle');
 
   const isFetching = status === 'fetching';
 
-  useEffect(() => {
+  const loadChannelData = async (channelId: number) => {
+    setStatus('fetching');
+
+    try {
+      const { data } = await axios.get(`http://localhost:3003/channels/${channelId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const { name, messageSent5Min, messageSentTotal, messages, users } = data;
+
+      setChannelName(name);
+      setMessageSent5Min(messageSent5Min);
+      setMessageSentTotal(messageSentTotal);
+      setMessages(messages);
+      setUsers(users);
+    } catch (error) {
+      console.error(error);
+    }
+
     setStatus('idle');
+  };
+
+  useEffect(() => {
+    if (channelId) loadChannelData(parseInt(channelId));
   }, [channelId]);
 
   return (
@@ -26,19 +57,14 @@ const ChannelContent: FC = () => {
       ) : (
         <>
           <div className="content">
-            <div className="name"># general</div>
+            <div className="name"># {channelName}</div>
 
-            <Messages />
+            <Messages messages={messages} />
 
             <textarea maxLength={255} onKeyDown={() => console.log('Send it!')} />
           </div>
 
-          <div className="users">
-            <div className="title">Users in this channel</div>
-            <div>
-              <p>string</p>
-            </div>
-          </div>
+          <Users users={users} />
         </>
       )}
     </div>

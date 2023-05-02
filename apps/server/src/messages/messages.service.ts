@@ -24,7 +24,11 @@ export class MessagesService {
         id: true,
         content: true,
         createdAt: true,
+        user: {
+          username: true,
+        },
       },
+      relations: { user: true },
       where: { channelId },
       order: { createdAt: 'DESC' },
     });

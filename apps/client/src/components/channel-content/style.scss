@@ -15,24 +15,12 @@
 
     .name {
       font-size: 20px;
+      padding: 0 0 15px 0px;
     }
 
     textarea {
       resize: none;
       width: 100%;
-    }
-  }
-
-  .users {
-    padding: 10px;
-    border-left: 1px solid gainsboro;
-
-    .title {
-      margin-bottom: 10px;
-    }
-
-    p {
-      margin: 0;
     }
   }
 
