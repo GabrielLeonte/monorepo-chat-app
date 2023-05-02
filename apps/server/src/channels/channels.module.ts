@@ -10,5 +10,6 @@ import { Channels } from './entities/channels.entity';
   imports: [TypeOrmModule.forFeature([Channels])],
   providers: [ChannelsService],
   controllers: [ChannelsController],
+  exports: [ChannelsService],
 })
 export class ChannelsModule {}

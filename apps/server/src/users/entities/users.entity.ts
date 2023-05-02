@@ -11,7 +11,7 @@ export class Users {
   @Column({ type: 'uuid' })
   uuid: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   username: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })

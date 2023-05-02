@@ -5,7 +5,7 @@ export class Channels {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   name: string;
 
   @Column({ type: 'boolean', default: false })
