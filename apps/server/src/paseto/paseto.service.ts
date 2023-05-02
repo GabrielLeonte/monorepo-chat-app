@@ -19,9 +19,9 @@ export class PasetoService {
   constructor(private readonly usersService: UsersService) {}
 
   public async sign(uuid: string): Promise<string> {
-    return sign({ uuid }, privateKey, { expiresIn });
+    return sign({ uuid }, privateKey, {});
   }
-
+  expiresIn; // todo: do not forget about this :)
   public async verify(token: string): Promise<Users> {
     const { uuid } = await verify<PasetoTokenPayload>(token, privateKey);
 

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+import { Users } from 'src/users/entities/users.entity';
 
 @Entity()
 export class Channels {
@@ -11,6 +13,10 @@ export class Channels {
   @Column({ type: 'boolean', default: false })
   isGlobal: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt: Date;
+
+  @JoinTable({ name: 'user_channels' })
+  @ManyToMany(() => Users, (user) => user.id)
+  users: Array<Users>;
 }

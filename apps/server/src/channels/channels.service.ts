@@ -13,8 +13,15 @@ export class ChannelsService {
 
   public async getUserChannels(userId: number): Promise<Array<Channels>> {
     return this.channelsRepository.find({
-      select: { id: true, name: true },
-      where: [{ isGlobal: true }],
+      relations: { users: true },
+      select: { id: true, name: true, users: {} },
+      where: [
+        { isGlobal: true },
+        {
+          users: { id: userId },
+        },
+      ],
+      order: { isGlobal: 'desc' },
     });
   }
 

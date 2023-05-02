@@ -1,7 +1,9 @@
 import { genSaltSync, hashSync } from 'bcrypt';
 import { randomBytes, randomUUID } from 'crypto';
+import { AfterLoad, BeforeInsert, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+
+import { Channels } from 'src/channels/entities/channels.entity';
 import { encryptSymetrical } from 'src/utils/encryption';
-import { AfterLoad, BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Users {
@@ -20,11 +22,14 @@ export class Users {
   @Column({ type: 'varchar', length: 255, nullable: false })
   salt: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToMany(() => Channels, (channel) => channel.id)
+  channels: Array<Channels>;
 
   @BeforeInsert()
   public beforeInsert() {
