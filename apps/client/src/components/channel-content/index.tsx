@@ -62,6 +62,11 @@ const ChannelContent: FC = () => {
             <Messages messages={messages} />
 
             <textarea maxLength={255} onKeyDown={() => console.log('Send it!')} />
+
+            <div className="stats">
+              <span>Total Messages Sent: {messageSentTotal}</span>
+              <span>Total Messages Sent in the last 5 min: {messageSent5Min}</span>
+            </div>
           </div>
 
           <Users users={users} />

@@ -39,7 +39,7 @@ export class MessagesService {
 
     const [messageSentTotal, messageSent5Min] = await BPromise.all([
       this.messagesRepository.count({ where: { channelId } }),
-      this.messagesRepository.count({ where: { createdAt } }),
+      this.messagesRepository.count({ where: { channelId, createdAt } }),
     ]);
 
     return {
