@@ -1,9 +1,12 @@
 import { compareSync } from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { LoginRequest, LoginResponse } from './dto/login.dto';
+
 import { UsersService } from 'src/users/users.service';
 import { PasetoService } from 'src/paseto/paseto.service';
+
 import { encryptSymetrical } from 'src/utils/encryption';
+
+import { LoginRequest, LoginResponse } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {

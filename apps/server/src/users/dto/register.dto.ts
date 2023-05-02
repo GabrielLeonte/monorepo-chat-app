@@ -7,8 +7,3 @@ export class RegisterRequest {
   @ApiProperty()
   password: string;
 }
-
-export class RegisterResponse {
-  @ApiProperty()
-  token: string;
-}

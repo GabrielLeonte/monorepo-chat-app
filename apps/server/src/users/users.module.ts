@@ -6,10 +6,8 @@ import { UsersController } from './users.controller';
 
 import { Users } from './entities/users.entity';
 
-import { PasetoModule } from 'src/paseto/paseto.module';
-
 @Module({
-  imports: [TypeOrmModule.forFeature([Users]), PasetoModule],
+  imports: [TypeOrmModule.forFeature([Users])],
   providers: [UsersService],
   controllers: [UsersController],
   exports: [UsersService],

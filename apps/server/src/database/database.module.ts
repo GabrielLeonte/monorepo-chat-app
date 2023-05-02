@@ -16,7 +16,7 @@ const { HOST, PORT, USERNAME, PASSWORD, NAME } = JSON.parse(DATABASE);
       password: PASSWORD,
       database: NAME,
       entities: [Users],
-      synchronize: true, // shoudn't be true in a production/development environment, but could work great for local as it speeds up development
+      synchronize: true, // shouldn't be true in a production/development environment, but could work great for local as it speeds up development
     }),
   ],
 })

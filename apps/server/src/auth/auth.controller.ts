@@ -16,7 +16,7 @@ export class AuthController {
     description: 'Returns a Paseto token used for authorization',
     type: LoginResponse,
   })
-  public login(@Body() loginData: LoginRequest) {
+  public login(@Body() loginData: LoginRequest): Promise<LoginResponse> {
     return this.authService.login(loginData);
   }
 }

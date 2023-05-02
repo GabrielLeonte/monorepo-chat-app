@@ -16,10 +16,7 @@ const bootstrap = async () => {
 
   app.use(helmet());
 
-  const config = new DocumentBuilder()
-    .setTitle('Chat App')
-    .setDescription('Simple chat app using websockets')
-    .build();
+  const config = new DocumentBuilder().setTitle('Chat App').setDescription('Simple chat app using websockets').addBearerAuth().build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/swagger', app, document);

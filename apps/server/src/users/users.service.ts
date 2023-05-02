@@ -4,16 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Users } from './entities/users.entity';
 
-import { PasetoService } from 'src/paseto/paseto.service';
-
-import { RegisterRequest, RegisterResponse } from './dto/register.dto';
+import { RegisterRequest } from './dto/register.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Users)
-    private readonly usersRepository: Repository<Users>,
-    private readonly pasetoService: PasetoService
+    private readonly usersRepository: Repository<Users>
   ) {}
 
   // this is not something very common, usually dedicated functions are the way to go into other porjects,
@@ -32,7 +29,7 @@ export class UsersService {
     return user ? user.uuid : null;
   }
 
-  public async register(payload: RegisterRequest): Promise<RegisterResponse> {
+  public async register(payload: RegisterRequest): Promise<void> {
     const { username, password } = payload;
 
     const alreadyExists = await this.usersRepository.count({
@@ -44,11 +41,5 @@ export class UsersService {
     const user = this.usersRepository.create({ username, password });
 
     await this.usersRepository.save(user);
-
-    const token = await this.pasetoService.sign(user.uuid);
-
-    return {
-      token,
-    };
   }
 }

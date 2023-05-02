@@ -1,7 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RegisterRequest, RegisterResponse } from './dto/register.dto';
+
 import { UsersService } from './users.service';
+
+import { RegisterRequest } from './dto/register.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -12,9 +14,8 @@ export class UsersController {
   @ApiResponse({
     status: 201,
     description: 'Register a new user in the platform',
-    type: RegisterResponse,
   })
-  public register(@Body() body: RegisterRequest) {
+  public register(@Body() body: RegisterRequest): Promise<void> {
     return this.usersService.register(body);
   }
 }
