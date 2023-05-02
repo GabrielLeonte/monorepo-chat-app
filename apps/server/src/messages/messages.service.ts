@@ -30,7 +30,7 @@ export class MessagesService {
       },
       relations: { user: true },
       where: { channelId },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: 'ASC' },
     });
   }
 
