@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateChannelRequest {
-  @ApiProperty()
+  @ApiProperty({ default: 'general' })
   name: string;
 }

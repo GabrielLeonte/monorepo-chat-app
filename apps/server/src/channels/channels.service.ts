@@ -11,6 +11,13 @@ export class ChannelsService {
     private readonly channelsRepository: Repository<Channels>
   ) {}
 
+  public async getUserChannels(userId: number): Promise<Array<Channels>> {
+    return this.channelsRepository.find({
+      select: { id: true, name: true },
+      where: [{ isGlobal: true }],
+    });
+  }
+
   public createGlobalChannel(name: string): Promise<Channels> {
     const channel = this.channelsRepository.create({
       name,
