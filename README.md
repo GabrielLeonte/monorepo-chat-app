@@ -31,11 +31,14 @@ Creating a global channel is done using the following swagger endpoint `http://l
 
 ## Next steps:
 
-1. Prepare the code for deployment and setup the pipelines
-2. Add support for a user to create his own channels and join
-3. WebRTC, password protected channels and more features
-4. Improve the client folder structuring
-5. Add Redis to manage the sessions in a more secure manner
-6. Move to CassandraDB/ScyllaDB (NoSQL, design for large data amounts, same API, more efficient) in order to store channels and the messages related to them
-7. Secure SocketIO Communications
-8. Refactor, there is always space for refactoring
+1. Create a decorator to prevent a user from sending a message to a channel he is not a part of
+2. Prepare the code for deployment and setup the pipelines
+3. Add support for a user to create his own channels and join
+4. WebRTC, password protected channels and more features
+5. Improve the client folder structuring and API management
+6. Add Redis to manage the sessions in a more secure manner
+7. Move to CassandraDB/ScyllaDB (NoSQL, design for large data amounts, same API, more efficient) in order to store channels and the messages related to them and improve relationships between the Postgres entities.
+8. Add database indexes to increase query performance
+9. Secure SocketIo Communications (Redis token, SSL certificate, etc.)
+10. Refactor, there is always space for refactoring
+11. Add error handling on frontend
