@@ -5,10 +5,18 @@ import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGatew
 import { AuthGuard } from 'src/auth/auth.guard';
 
 import { MessagesService } from 'src/messages/messages.service';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { Users } from 'src/users/entities/users.entity';
 
-@WebSocketGateway(8080, { cors: true })
+type Request = Socket & { user: Users };
+
+type SendMessagePayload = {
+  channelId: number;
+  content: string;
+};
+
+const { SOCKETS_PORT } = process.env;
+
+@WebSocketGateway(parseInt(SOCKETS_PORT), { cors: true }) // cors will require a little bit more configuration on development/production environments
 export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly messagesService: MessagesService) {}
 
@@ -28,14 +36,14 @@ export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, On
 
   @UseGuards(AuthGuard)
   @SubscribeMessage('send_message')
-  async handleSendMessage(request: Socket & { user: Users }, payload: { channelId: string; message: string }): Promise<void> {
+  async handleSendMessage(request: Request, payload: SendMessagePayload): Promise<void> {
     const { user } = request;
-    const { channelId, message } = payload;
+    const { channelId, content } = payload;
 
     const messageObject = await this.messagesService.create({
+      channelId,
       userId: user.id,
-      channelId: parseInt(channelId),
-      content: message.trim(),
+      content: content.trim(),
     });
 
     this.wss.emit(`messages_channel_${channelId}`, {
@@ -46,5 +54,9 @@ export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, On
         username: user.username,
       },
     });
+
+    const channelStatistics = await this.messagesService.getChannelStatistics(channelId);
+
+    this.wss.emit(`channel_statistics_${channelId}`, channelStatistics);
   }
 }

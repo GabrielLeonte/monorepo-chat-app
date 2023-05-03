@@ -7,3 +7,8 @@ export type GetChannelData = {
   messages: Array<MessageObject>;
   users: Array<any>;
 };
+
+export type ChannelStatistics = {
+  messageSentTotal: number;
+  messageSent5Min: number;
+};

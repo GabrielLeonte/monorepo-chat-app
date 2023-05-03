@@ -1,15 +1,16 @@
 import axios from 'axios';
-import { FC, useCallback, useEffect, useState, useReducer } from 'react';
+import { FC, useEffect, useState, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 
 import Messages from './messages';
 import Users from './users';
+import SendMessage from './send-message';
 
 import { API_URL, SOCKETS_URL } from '../../config';
 
 import { FetchingStatus } from '../../types/fetching';
-import { GetChannelData, MessageObject } from '../../types/channel';
+import { ChannelStatistics, GetChannelData, MessageObject } from '../../types/channel';
 
 import './style.scss';
 
@@ -26,8 +27,6 @@ const ChannelContent: FC = () => {
     messages: [],
     users: [],
   });
-
-  const [message, setMessage] = useState('');
 
   const isFetching = status === 'fetching';
 
@@ -57,25 +56,6 @@ const ChannelContent: FC = () => {
     setStatus('idle');
   };
 
-  const sendMessage: React.KeyboardEventHandler<HTMLTextAreaElement> = useCallback(
-    async (event) => {
-      const isEnter = event.key === 'Enter';
-      const isNewLine = isEnter && event.shiftKey === false;
-
-      if (isEnter) event.preventDefault();
-
-      if (!isNewLine || message.trim().length === 0) return;
-
-      socket?.emit('send_message', {
-        channelId,
-        message: message.trim(),
-      });
-
-      setMessage('');
-    },
-    [channelId, message, socket]
-  );
-
   useEffect(() => {
     const token = localStorage.getItem('token');
 
@@ -101,10 +81,18 @@ const ChannelContent: FC = () => {
       setState({ messages: [...state.messages, newMessage] });
     };
 
+    const onChannelStatisticsUpdate = (newChannelStatistics: ChannelStatistics) => {
+      const { messageSent5Min, messageSentTotal } = newChannelStatistics;
+
+      setState({ messageSent5Min, messageSentTotal });
+    };
+
     socket?.on(`messages_channel_${channelId}`, onMessageEvent);
+    socket?.on(`channel_statistics_${channelId}`, onChannelStatisticsUpdate);
 
     return () => {
       socket?.off(`messages_channel_${channelId}`, onMessageEvent);
+      socket?.off(`channel_statistics_${channelId}`, onChannelStatisticsUpdate);
     };
   }, [channelId, socket, state.messages]);
 
@@ -122,13 +110,7 @@ const ChannelContent: FC = () => {
             <div className="name"># {state.channelName}</div>
 
             <Messages messages={state.messages} />
-
-            <textarea value={message} onChange={(event) => setMessage(event.target.value)} onKeyDown={sendMessage} maxLength={255} />
-
-            <div className="stats">
-              <span>Total Messages Sent: {state.messageSentTotal}</span>
-              <span>Total Messages Sent in the last 5 min: {state.messageSent5Min}</span>
-            </div>
+            <SendMessage socket={socket} state={state} />
           </div>
 
           <Users users={state.users} />
