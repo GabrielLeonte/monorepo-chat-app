@@ -1,5 +1,5 @@
 import { compareSync } from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { UsersService } from 'src/users/users.service';
 import { PasetoService } from 'src/paseto/paseto.service';
@@ -20,11 +20,11 @@ export class AuthService {
       where: { username: encryptSymetrical(username) },
     });
 
-    if (!user) throw new Error("This user doesn't exist");
+    if (!user) throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
 
     const isSamePassword = compareSync(password, user.password);
 
-    if (!isSamePassword) throw new Error('Wrong password.');
+    if (!isSamePassword) throw new HttpException('Wrong password.', HttpStatus.UNAUTHORIZED);
 
     const token = await this.pasetoService.sign(user.uuid);
 

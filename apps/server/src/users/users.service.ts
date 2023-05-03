@@ -1,5 +1,5 @@
 import { FindOneOptions, FindOptionsSelect, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Users } from './entities/users.entity';
@@ -40,7 +40,7 @@ export class UsersService {
       where: { username },
     });
 
-    if (alreadyExists != 0) throw new Error('This user already exists :(');
+    if (alreadyExists != 0) throw new HttpException('This user already exists :(', HttpStatus.CONFLICT);
 
     const user = this.usersRepository.create({ username, password });
 

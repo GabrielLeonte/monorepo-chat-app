@@ -23,7 +23,7 @@ export class ChannelsController {
 
   @Get(':id')
   @ApiResponse({ status: 200, description: 'Return channel data, messages and user', type: GetChannelsDataResponse })
-  getChannelData(@Param('id') channelId: number): Promise<any> {
-    return this.channelsService.getChannelData(channelId);
+  getChannelData(@Param('id') channelId: number, @CurrentUser() user: Users): Promise<any> {
+    return this.channelsService.getChannelData(channelId, user.id);
   }
 }

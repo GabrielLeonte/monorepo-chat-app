@@ -1,6 +1,6 @@
 import * as BPromise from 'bluebird';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Channels } from './entities/channels.entity';
@@ -33,11 +33,11 @@ export class ChannelsService {
 
   public async getChannelUsers(channelId: number, isGlobal: boolean) {
     if (isGlobal) {
-      return this.usersService.findAll({ username: true });
+      return this.usersService.findAll({ id: true, username: true });
     }
 
     const channelData = await this.channelsRepository.find({
-      select: { users: { username: true } },
+      select: { users: { id: true, username: true } },
       where: { id: channelId },
       relations: { users: true },
     });
@@ -45,7 +45,7 @@ export class ChannelsService {
     return channelData[0].users;
   }
 
-  public async getChannelData(channelId: number): Promise<any> {
+  public async getChannelData(channelId: number, userId: number): Promise<any> {
     const channel = await this.channelsRepository.findOne({
       select: {
         name: true,
@@ -54,12 +54,19 @@ export class ChannelsService {
       where: { id: channelId },
     });
 
-    if (!channel) throw new Error("This channel doesn't exist");
+    if (!channel) throw new HttpException("This channel doesn't exist", HttpStatus.NOT_FOUND);
 
     const { name, isGlobal } = channel;
 
-    const [users, messages, { messageSent5Min, messageSentTotal }] = await BPromise.all([
-      this.getChannelUsers(channelId, isGlobal),
+    const users = await this.getChannelUsers(channelId, isGlobal);
+
+    if (!isGlobal) {
+      const userHasAccess = users.some((user) => user.id === userId);
+
+      if (!userHasAccess) throw new HttpException("You don't have access to this channel", HttpStatus.FORBIDDEN);
+    }
+
+    const [messages, { messageSent5Min, messageSentTotal }] = await BPromise.all([
       this.messagesService.getLast10Messages(channelId),
       this.messagesService.getChannelStatistics(channelId),
     ]);
@@ -69,7 +76,7 @@ export class ChannelsService {
       messageSent5Min,
       messageSentTotal,
       messages,
-      users,
+      users: users.map((user) => ({ username: user.username })),
     };
   }
 
