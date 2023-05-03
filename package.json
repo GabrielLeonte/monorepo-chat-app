@@ -1,7 +1,11 @@
 {
-  "name": "monorepo-chat-app",
+  "name": "monorepo-chat",
   "author": "Gabi <gabriel@grasslabs.co>",
+  "private": true,
   "license": "MIT",
+  "scripts": {
+    "start": "yarn workspace @chat/client start & yarn workspace @chat/server start"
+  },
   "packageManager": "yarn@3.5.1",
   "workspaces": [
     "apps/*"
