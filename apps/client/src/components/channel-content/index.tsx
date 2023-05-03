@@ -1,42 +1,41 @@
 import axios from 'axios';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 
 import Messages from './messages';
 import Users from './users';
 
+import { API_URL, SOCKETS_URL } from '../../config';
+
 import { FetchingStatus } from '../../types/fetching';
+import { GetChannelData, MessageObject } from '../../types/channel';
 
 import './style.scss';
 
 const ChannelContent: FC = () => {
   const { channelId } = useParams();
+
   const [socket, setSocket] = useState<Socket>();
-
-  // ---- STATE ---
-
   const [status, setStatus] = useState<FetchingStatus>('idle');
 
-  const [channelName, setChannelName] = useState<string>();
-  const [messageSent5Min, setMessageSent5Min] = useState<number>();
-  const [messageSentTotal, setMessageSentTotal] = useState<number>();
-  const [messages, setMessages] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [state, setState] = useReducer((state: GetChannelData, changes: Partial<GetChannelData>) => ({ ...state, ...changes }), {
+    channelName: null,
+    messageSent5Min: null,
+    messageSentTotal: null,
+    messages: [],
+    users: [],
+  });
 
   const [message, setMessage] = useState('');
 
-  // ---- CONSTANTS ----
-
   const isFetching = status === 'fetching';
-
-  // ---- FUNCTIONS ----
 
   const loadChannelData = async (channelId: number) => {
     setStatus('fetching');
 
     try {
-      const { data } = await axios.get(`http://localhost:3003/channels/${channelId}`, {
+      const { data } = await axios.get(`${API_URL}/channels/${channelId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -44,11 +43,13 @@ const ChannelContent: FC = () => {
 
       const { name, messageSent5Min, messageSentTotal, messages, users } = data;
 
-      setChannelName(name);
-      setMessageSent5Min(messageSent5Min);
-      setMessageSentTotal(messageSentTotal);
-      setMessages(messages);
-      setUsers(users);
+      setState({
+        channelName: name,
+        messageSent5Min,
+        messageSentTotal,
+        messages,
+        users,
+      });
     } catch (error) {
       console.error(error);
     }
@@ -75,19 +76,18 @@ const ChannelContent: FC = () => {
     [channelId, message, socket]
   );
 
-  // ---- EFFECTS ----
-
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     if (!token) return;
 
-    const newSocket = io('http://localhost:8080', {
+    const newSocket = io(SOCKETS_URL, {
       autoConnect: false,
       extraHeaders: {
         Authorization: `Bearer ${token}`,
       },
     });
+
     setSocket(newSocket);
 
     newSocket?.connect();
@@ -97,21 +97,20 @@ const ChannelContent: FC = () => {
   }, []);
 
   useEffect(() => {
-    if (channelId) loadChannelData(parseInt(channelId));
-
-    const onFooEvent = (value: any) => {
-      // @ts-ignore
-      setMessages((previous) => [...previous, value]);
+    const onMessageEvent = (newMessage: MessageObject) => {
+      setState({ messages: [...state.messages, newMessage] });
     };
 
-    socket?.on(`messages_channel_${channelId}`, onFooEvent);
+    socket?.on(`messages_channel_${channelId}`, onMessageEvent);
 
     return () => {
-      socket?.off(`messages_channel_${channelId}`, onFooEvent);
+      socket?.off(`messages_channel_${channelId}`, onMessageEvent);
     };
-  }, [channelId, socket]);
+  }, [channelId, socket, state.messages]);
 
-  // ---- RENDER ----
+  useEffect(() => {
+    if (channelId) loadChannelData(parseInt(channelId));
+  }, [channelId]);
 
   return (
     <div className="channel-content">
@@ -120,19 +119,19 @@ const ChannelContent: FC = () => {
       ) : (
         <>
           <div className="content">
-            <div className="name"># {channelName}</div>
+            <div className="name"># {state.channelName}</div>
 
-            <Messages messages={messages} />
+            <Messages messages={state.messages} />
 
             <textarea value={message} onChange={(event) => setMessage(event.target.value)} onKeyDown={sendMessage} maxLength={255} />
 
             <div className="stats">
-              <span>Total Messages Sent: {messageSentTotal}</span>
-              <span>Total Messages Sent in the last 5 min: {messageSent5Min}</span>
+              <span>Total Messages Sent: {state.messageSentTotal}</span>
+              <span>Total Messages Sent in the last 5 min: {state.messageSent5Min}</span>
             </div>
           </div>
 
-          <Users users={users} />
+          <Users users={state.users} />
         </>
       )}
     </div>

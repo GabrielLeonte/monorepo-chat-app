@@ -2,6 +2,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
+import { API_URL } from '../../config';
+
 import './style.scss';
 
 type FormPayload = {
@@ -17,7 +19,7 @@ const Login = () => {
     const { username, password } = data;
 
     try {
-      const { data } = await axios.post('http://localhost:3003/auth/login', { username, password });
+      const { data } = await axios.post(`${API_URL}/auth/login`, { username, password });
       const { token } = data;
 
       localStorage.setItem('token', token);

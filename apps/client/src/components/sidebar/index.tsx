@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { FetchingStatus } from '../../types/fetching';
+import { API_URL } from '../../config';
 
 import './style.scss';
 
@@ -23,7 +24,7 @@ const Sidebar = () => {
     setStatus('fetching');
 
     try {
-      const { data } = await axios.get('http://localhost:3003/channels', {
+      const { data } = await axios.get(`${API_URL}/channels`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
