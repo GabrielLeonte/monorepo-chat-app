@@ -6,6 +6,12 @@ import { Injectable } from '@nestjs/common';
 import { Messages } from './entities/messages.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
+type Create = {
+  channelId: number;
+  userId: number;
+  content: string;
+};
+
 type GetChannelStatistics = {
   messageSentTotal: number;
   messageSent5Min: number;
@@ -18,8 +24,18 @@ export class MessagesService {
     private readonly messagesRepository: Repository<Messages>
   ) {}
 
-  public getLast10Messages(channelId: number): Promise<Array<Messages>> {
-    return this.messagesRepository.find({
+  public create({ channelId, userId, content }: Create): Promise<Messages> {
+    return this.messagesRepository.save(
+      this.messagesRepository.create({
+        channelId,
+        userId,
+        content,
+      })
+    );
+  }
+
+  public async getLast10Messages(channelId: number): Promise<Array<Messages>> {
+    const messages = await this.messagesRepository.find({
       select: {
         id: true,
         content: true,
@@ -30,7 +46,12 @@ export class MessagesService {
       },
       relations: { user: true },
       where: { channelId },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'DESC' },
+      take: 10,
+    });
+
+    return messages.sort((messageOne, messageTwo) => {
+      return new Date(messageOne.createdAt).getTime() - new Date(messageTwo.createdAt).getTime();
     });
   }
 

@@ -26,7 +26,7 @@ export class PasetoService {
     const { uuid } = await verify<PasetoTokenPayload>(token, privateKey);
 
     const user = await this.usersService.findOne({
-      select: { id: true },
+      select: { id: true, username: true },
       where: { uuid },
     });
 
