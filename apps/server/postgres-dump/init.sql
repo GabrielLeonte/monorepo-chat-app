@@ -1,3 +1,4 @@
+CREATE SEQUENCE channels_id_seq;
 CREATE TABLE "public"."channels" (
     "id" int4 NOT NULL DEFAULT nextval('channels_id_seq'::regclass),
     "name" varchar(255) NOT NULL,
@@ -5,5 +6,5 @@ CREATE TABLE "public"."channels" (
     "createdAt" timestamp NOT NULL DEFAULT now(),
     PRIMARY KEY ("id")
 );
-
-INSERT INTO "public"."channels" ("name", "isGlobal", "createdAt") VALUES ('general', 't', now());
+INSERT INTO "public"."channels" ("name", "isGlobal", "createdAt")
+VALUES ('general', 't', now());
